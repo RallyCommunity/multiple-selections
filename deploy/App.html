@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Grid filtered by multiple dropdowns</title>
+
+    <script type="text/javascript" src="/apps/2.0/sdk.js"></script>
+
+    <script type="text/javascript">
+        Rally.onReady(function () {
+                Ext.define("CustomApp",{extend:"Rally.app.App",componentCls:"app",items:[{html:"Select a checkbox to filter the grid"},{xtype:"container",itemId:"StateFilter"},{xtype:"container",itemId:"ReleaseFilter"}],launch:function(){this._createFilterBox("State"),this._createFilterBox("Release")},_createFilterBox:function(property){this.down("#"+property+"Filter").add({xtype:"checkbox",cls:"filter",boxLabel:"Filter grid by "+property,id:property+"Checkbox",handler:this._getFilter,scope:this}),this.down("#"+property+"Filter").add({xtype:"rallyfieldvaluecombobox",id:property+"Combobox",model:"Defect",field:property,listeners:{select:this._getFilter,ready:this._getFilter,scope:this}})},_getFilter:function(){var filter=Ext.create("Rally.data.wsapi.Filter",{property:"Requirement",operator:"=",value:"null"});filter=this._checkFilterStatus("State",filter),filter=this._checkFilterStatus("Release",filter),void 0===this._myGrid?this._makeGrid(filter):(this._myGrid.store.clearFilter(!0),this._myGrid.store.filter(filter))},_checkFilterStatus:function(property,filter){if(Ext.getCmp(property+"Checkbox").getValue()){for(var filterString=Ext.getCmp(property+"Combobox").getValue()+"",filterArr=filterString.split(","),propertyFilter=Ext.create("Rally.data.wsapi.Filter",{property:property,operator:"=",value:filterArr[0]}),i=1;filterArr.length>i;)propertyFilter=propertyFilter.or({property:property,operator:"=",value:filterArr[i]}),i++;filter=filter.and(propertyFilter)}return filter},_makeGrid:function(filter){this._myGrid=Ext.create("Rally.ui.grid.Grid",{itemId:"defects-grid",columnCfgs:["FormattedID","Name","State","Release"],context:this.getContext(),storeConfig:{model:"defect",context:this.context.getDataContext(),filters:filter}}),this.add(this._myGrid)}});
+
+            Rally.launchApp('CustomApp', {
+                name:"Grid filtered by multiple dropdowns",
+	            parentRepos:""
+            });
+
+        });
+    </script>
+
+
+    <style type="text/css">
+        
+    </style>
+</head>
+<body>
+</body>
+</html>
