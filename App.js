@@ -29,6 +29,7 @@ Ext.define('CustomApp', {
             xtype: 'rallyfieldvaluecombobox',
             id: property +'Combobox',
             model: 'Defect',
+            multiSelect: true,
             field: property,
             listeners: {
                 select: this._getFilter,
